@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edu.user">
+
+	<insert id="save" parameterType="UserVO">
+		INSERT INTO USER (
+			USER_ID
+			,PW
+		) VALUES (
+			#{userId}
+			,#{pw}
+		)		 
+	</insert>
+
+	<select id="retrieve" parameterType="SearchVO" resultType="UserVO">
+		SELECT USER_ID AS userId
+			  ,PW AS pw
+		FROM USER
+		WHERE USER_ID = CONCAT("%",#{search},"%")
+	</select>
+	
+	<select id="selectOne" parameterType="UserVO" resultType="UserVO">
+		SELECT USER_ID AS userId
+			  ,PW AS pw
+		FROM USER
+		WHERE USER_ID = #{userId}
+	</select>
+	
+	<delete id="delete" parameterType="UserVO">
+		DELETE FROM USER
+		WHERE USER_ID = #{userId}
+	</delete>
+	
+	<update id="update" parameterType="UserVO">
+		UPDATE USER
+		SET USER_ID = #{userId}
+			,PW = #{pw}
+		WHERE
+			USER_ID = #{userId}
+	</update>
+</mapper>
