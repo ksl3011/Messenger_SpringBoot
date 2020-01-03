@@ -1,44 +1,40 @@
 package com.study.user.web;
 
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.study.cmn.MessageVO;
+import com.study.cmn.JsonVO;
+import com.study.user.UserService;
+import com.study.user.UserVO;
 
 @Controller
 public class UserController {
+
+	@Autowired
+	private UserService u;
 	
 	@ResponseBody
-	@MessageMapping(value = "/m/brokerA/subscribe")//맵핑
-	@SendTo("/brokerA")//이 주소로 구독중인 stompClient로 전송
-	public String subscribe(String msg) {
-		System.out.println("brokerA/subscribe << " + msg);
+	@RequestMapping(value = "/join", method = RequestMethod.POST)
+	public String join(UserVO vo) {
+		int flag = u.save(vo);
+		JsonVO json = new JsonVO(flag, ((flag==1)?"ok":"no") );
 		Gson gson = new Gson();
-		String gsonMsg = gson.toJson(msg);
-		return gsonMsg;
+		String gsonString = gson.toJson(json);
+		return gsonString;
 	}
 	
 	@ResponseBody
-	@MessageMapping(value = "/m/brokerA/out")
-	@SendTo("/brokerA")
-	public String out(String msg) {
-		System.out.println("brokerA/out << " + msg);
+	@RequestMapping(value = "/validation", method = RequestMethod.POST)
+	public String validation(UserVO vo) {
+		UserVO outvo = (UserVO) u.selectOne(vo);
+		boolean flag = (outvo==null);
+		JsonVO json = new JsonVO( (flag?1:0), (flag?"ok":"no") );
 		Gson gson = new Gson();
-		String gsonMsg = gson.toJson(msg);
-		return gsonMsg;
+		String gsonString = gson.toJson(json);
+		return gsonString;
 	}
-	
-	@ResponseBody
-	@MessageMapping(value = "/m/brokerA/msg")
-	@SendTo("/brokerA")
-	public MessageVO message(MessageVO vo) {
-		System.out.println("brokerA서버/받은메시지 : " + vo);
-		return vo;
-	}
-	
-	
-	
 }

@@ -35,6 +35,7 @@
 			<i class="icon edit"></i>SEND
 		</div>
 	</div>
+	
 <script src="/Messenger/js/sockjs.min.js"></script>
 <script src="/Messenger/js/stomp.min.js"></script>
 <script
@@ -64,9 +65,9 @@
 		},
 		disconnect:function(){
 			var stompClient = this.stompClient;
-			if(stomClient){
-				stomClient.send("/m/brokerA/out", {}, "stompClient 종료");
-				stomClient.disconnect();
+			if(stompClient){
+				stompClient.send("/m/brokerA/out", {}, "stompClient 종료");
+				stompClient.disconnect();
 			}
 		},
 		sendMsg:function(msg){
@@ -80,11 +81,12 @@
 	
 	//받은메시지처리
 	function messagefilter(msg){
-		if(msg == 'close'){
+		var msgJson = JSON.parse(msg.body);
+		if(msgJson.contents == 'close'){
 			WebSocket.disconnect();
 		}
 		else{
-			appendMsgToHTML(msg, ".commentBox", true);
+			appendMsgToHTML(msgJson, ".commentBox", true);
 		}
 	}
 	
@@ -107,26 +109,22 @@
 	
 	
 	//대화창에 텍스트추가 (메시지, 메시지넣을 div이름, 스크롤아래로내릴껀지유무)
-	function appendMsgToHTML(msg, divName, scroll){
-		var name = JSON.parse(msg.body).name;
-		var contents = JSON.parse(msg.body).contents;
-		
-		$(divName).append(
-				"<div class='comment'>"
-				+"<a class='avatar'>"
-				+"<img src='https://semantic-ui.com/images/avatar/small/jenny.jpg'>"
-				+"</a>"
-				+"<div class='content'>"
-				+"<a class='author'>"+name+"</a>"
-				+"<div class='metadata'>"
-				+"<span class='date'>Yesterday at 12:30AM</span>"
-				+"</div>"
-				+"<div class='text'>"
-				+"<p>"+contents+"</p>"
-				+"</div>"
-				+"</div>"
-				+"</div>"
-		);
+	function appendMsgToHTML(msgJson, divName, scroll){
+		var name = msgJson.name;
+		var contents = msgJson.contents;
+		var html =  "<div class='comment'>";
+			html += "<a class='avatar'>";
+			html += "<img src='https://semantic-ui.com/images/avatar/small/jenny.jpg'>";
+			html += "</a>";
+			html += "<div class='content'>";
+			html += "<a class='author'>"+name+"</a>";
+			html += "<div class='metadata'>";
+			html += "<span class='date'>Yesterday at 12:30AM</span>";
+			html += "</div>";
+			html += "<div class='text'>";
+			html += "<p>"+contents+"</p>";
+			html += "</div></div></div>";
+		$(divName).append(html);
 		if(scroll) scrollFullDown(divName);
 	}
 	
