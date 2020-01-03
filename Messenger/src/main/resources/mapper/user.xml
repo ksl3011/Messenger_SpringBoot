@@ -26,6 +26,9 @@
 			  ,PW AS pw
 		FROM USER
 		WHERE USER_ID = #{userId}
+		<if test="#{pw != null and pw != ''}">
+		AND PW = #{pw}
+		</if>
 	</select>
 	
 	<delete id="delete" parameterType="UserVO">

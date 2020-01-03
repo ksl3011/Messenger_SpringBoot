@@ -103,7 +103,7 @@
 		var text = $("textarea").val();
 		if(text == "") return;
 		
-		WebSocket.sendMsg(JSON.stringify({name:"name", contents:text}));
+		WebSocket.sendMsg(JSON.stringify({name:"${vo.userId}", contents:text}));
 		$("textarea").val("");
 	});
 	

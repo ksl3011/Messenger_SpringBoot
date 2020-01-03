@@ -25,21 +25,22 @@
 <body>
 	<div class="edge">
 		<div class="ui inverted segment">
-			<div class="ui inverted form">
+			<form id="loginForm" method="POST" action="login" class="ui inverted form">
+				
 				<div class="field">
 					<label>ID
-						<input placeholder="ID" type="text">
+						<input placeholder="ID" name="userId" type="text">
 					</label>
 				</div>
 				<div class="field">
 					<label>Password
-						<input placeholder="Password" type="text">
+						<input placeholder="Password" name="pw" type="password">
 					</label>
 				</div>
 				<div class="ui submit positive button" id="loginBtn">Login</div>
 				<div class="ui mini compact button" id="joinBtn">Join</div>
-				
-			</div>
+			
+			</form>
 		</div>
 	</div>
 
@@ -83,6 +84,10 @@
 <script src="/Messenger/js/semantic.js"></script>
 <script src="http://malsup.github.com/jquery.form.js"></script>
 <script type="text/javascript">
+
+	$("#loginBtn").on("click", function(){
+		$("#loginForm").submit();
+	});
 
 	$("#joinBtn").on("click", function(){
 		$("#newId").val("");

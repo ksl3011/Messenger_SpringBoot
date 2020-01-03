@@ -1,5 +1,8 @@
 package com.study.user.web;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,11 +33,23 @@ public class UserController {
 	@ResponseBody
 	@RequestMapping(value = "/validation", method = RequestMethod.POST)
 	public String validation(UserVO vo) {
+		vo.setPw(null);
 		UserVO outvo = (UserVO) u.selectOne(vo);
 		boolean flag = (outvo==null);
 		JsonVO json = new JsonVO( (flag?1:0), (flag?"ok":"no") );
 		Gson gson = new Gson();
 		String gsonString = gson.toJson(json);
 		return gsonString;
+	}
+	
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public String login(UserVO vo, HttpServletRequest req) throws Exception {
+		UserVO outvo = (UserVO) u.selectOne(vo);
+		if(outvo!=null) {
+			req.setAttribute("vo", vo);
+			return "main";
+		}else {
+			throw new Exception();
+		}
 	}
 }
