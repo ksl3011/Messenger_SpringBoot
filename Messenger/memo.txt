@@ -2,3 +2,34 @@
 	restController
 	webSocket
 	
+	
+login
+	가입
+		중복확인 -> 가입처리
+	로그인
+		아이디확인 -> 리다이렉트돼도 정보남도록 로그인정보 세션처리 -> 주소바뀌도록 리다이렉트
+		
+웹소켓
+	Sockjs
+		웹소켓이 지원하지 않는 브라우저를 지원하기 위한 방법
+		웹소켓 api를 사용
+		ie6이상
+	
+	Stomp
+		웹소켓, sockjs는 받는 메시지를 모두 핸들링 해야한다
+			-> stomp의 구독과 브로커를 통해 해결
+				stomp클라이언트로 브로커 구독 -> 미리 맵핑한 주소로 메시지 send
+					-> 컨트롤러에서 원하는 브로커 구독자들에게 받은 메시지를 모두 전달
+	설정
+		WebSocketMessageBrokerConfigurer를 구현하여 설정클래스 생성
+			앤드포인트 지정
+			브로커 지정
+			인바운드아웃바운드시 stomphandler 인터셉터 추가
+				ChannelInterceptor 구현
+				StompHeaderAccessor사용하여 커멘드구분 (connect disconnect)
+			
+
+
+			
+시큐리티 jwt
+유저목록미구현

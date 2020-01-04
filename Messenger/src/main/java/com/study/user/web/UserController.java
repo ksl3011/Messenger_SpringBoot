@@ -1,7 +1,7 @@
 package com.study.user.web;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,8 +46,9 @@ public class UserController {
 	public String login(UserVO vo, HttpServletRequest req) throws Exception {
 		UserVO outvo = (UserVO) u.selectOne(vo);
 		if(outvo!=null) {
-			req.setAttribute("vo", vo);
-			return "main";
+			HttpSession s = req.getSession();
+			s.setAttribute("user", vo);
+			return "redirect:main.jsp";
 		}else {
 			throw new Exception();
 		}

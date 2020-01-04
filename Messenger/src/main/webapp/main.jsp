@@ -1,5 +1,13 @@
+<%@page import="com.study.user.UserVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%
+	HttpSession s = request.getSession();
+	UserVO vo = (s.getAttribute("user")==null)?null:(UserVO)s.getAttribute("user");
+	if(vo == null){
+		response.sendRedirect("login.jsp");
+	}
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,20 +66,29 @@
 			
 			this.stompClient.connect({}, function(){	//stomp연결
 				var stompClient = WebSocket.stompClient;
-				stompClient.subscribe("/brokerA", function(msg){//브로커선택
-					messagefilter(msg);
+				
+				//구독
+				stompClient.send("/m/brokerA/subscribe", {}, "${user.userId}");
+				
+				//브로커선택, 이 브로커한테서 받은 메시지 처리
+				stompClient.subscribe("/brokerA", function(msg){
+					inMsgFilter(msg);
 				});
 			});
 		},
 		disconnect:function(){
 			var stompClient = this.stompClient;
 			if(stompClient){
-				stompClient.send("/m/brokerA/out", {}, "stompClient 종료");
+				//stompClient.send("/m/brokerA/out", {}, "${user.userId}");
 				stompClient.disconnect();
 			}
 		},
 		sendMsg:function(msg){
 			WebSocket.stompClient.send("/m/brokerA/msg", {}, msg);
+			
+		},
+		getList:function(){
+			WebSocket.stompClient.send("/m/brokerA/userList", {}, "");
 			
 		},
 		init:function(){
@@ -80,13 +97,23 @@
 	};
 	
 	//받은메시지처리
-	function messagefilter(msg){
-		var msgJson = JSON.parse(msg.body);
-		if(msgJson.contents == 'close'){
+	function inMsgFilter(rawmsg){
+		var msgJson = JSON.parse(rawmsg.body);
+		var msg = msgJson.contents;
+		if(msg == 'close'){
 			WebSocket.disconnect();
-		}
-		else{
+		}else{
 			appendMsgToHTML(msgJson, ".commentBox", true);
+		}
+	}
+	
+	//보낼메시지처리
+	function outMsgFilter(rawmsg){
+		var msg = rawmsg;
+		if(msg == "//list"){
+			WebSocket.getList();
+		}else{
+			WebSocket.sendMsg(JSON.stringify({name:"${user.userId}", contents:msg}));
 		}
 	}
 	
@@ -102,8 +129,8 @@
 	$("#sendBtn").on("click", function(){
 		var text = $("textarea").val();
 		if(text == "") return;
+		outMsgFilter(text)
 		
-		WebSocket.sendMsg(JSON.stringify({name:"${vo.userId}", contents:text}));
 		$("textarea").val("");
 	});
 	

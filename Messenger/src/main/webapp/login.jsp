@@ -12,7 +12,6 @@
 		padding: 10px;
 		margin: 50px;
 		width: 500px;
-		height: 600px;
 	}
 	.modal{
 		left: ;
