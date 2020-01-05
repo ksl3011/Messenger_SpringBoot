@@ -47,7 +47,7 @@ public class UserController {
 		UserVO outvo = (UserVO) u.selectOne(vo);
 		if(outvo!=null) {
 			HttpSession s = req.getSession();
-			s.setAttribute("user", vo);
+			s.setAttribute("userId", vo.getUserId());
 			return "redirect:main.jsp";
 		}else {
 			throw new Exception();

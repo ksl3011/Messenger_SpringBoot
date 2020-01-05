@@ -25,11 +25,12 @@ login
 			앤드포인트 지정
 			브로커 지정
 			인바운드아웃바운드시 stomphandler 인터셉터 추가
+				HandshakeInterceptor 구현
+					핸드쉐이크시 세션가져와서 유저데이터 저장
 				ChannelInterceptor 구현
-				StompHeaderAccessor사용하여 커멘드구분 (connect disconnect)
+					StompHeaderAccessor사용하여 커멘드구분 (connect disconnect)
 			
 
 
 			
 시큐리티 jwt
-유저목록미구현

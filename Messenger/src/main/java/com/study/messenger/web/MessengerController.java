@@ -9,8 +9,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.socket.TextMessage;
@@ -21,7 +24,9 @@ import com.study.user.UserVO;
 
 @Controller
 public class MessengerController {
-	Set<String> userList = new HashSet<String>(); 
+
+	@Autowired
+	private StompHandler sh;
 	
 	/**
 	 * 구독
@@ -30,9 +35,8 @@ public class MessengerController {
 	 */
 	@MessageMapping(value = "/m/brokerA/subscribe")//맵핑
 	//@SendTo("/brokerA")//이 주소로 구독중인 stompClient로 전송
-	public void subscribe(String user) {
+	public void subscribe(String user, SimpMessageHeaderAccessor a) {
 		System.out.println("brokerA/subscribe << " + user);
-		userList.add(user);
 	}
 	
 	/**
@@ -44,7 +48,7 @@ public class MessengerController {
 	@MessageMapping(value = "/m/brokerA/userList")
 	@SendTo("/brokerA")
 	public MessageVO userList() {
-		MessageVO vo = new MessageVO("Server", userList.toString(), "");
+		MessageVO vo = new MessageVO("Server", sh.list.toString(), "");
 		return vo;
 	}
 	
@@ -58,7 +62,6 @@ public class MessengerController {
 	@SendTo("/brokerA")
 	public void out(String user, HttpServletRequest req) {
 		System.out.println("brokerA/out << " + user);
-		userList.remove(user);
 		HttpSession s = req.getSession();
 		s.invalidate();
 	}

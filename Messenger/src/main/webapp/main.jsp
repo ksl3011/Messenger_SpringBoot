@@ -3,8 +3,8 @@
     pageEncoding="UTF-8"%>
 <%
 	HttpSession s = request.getSession();
-	UserVO vo = (s.getAttribute("user")==null)?null:(UserVO)s.getAttribute("user");
-	if(vo == null){
+	String userId = (s.getAttribute("userId")==null)?null:(String)s.getAttribute("userId");
+	if(userId == null){
 		response.sendRedirect("login.jsp");
 	}
 %>
@@ -68,7 +68,7 @@
 				var stompClient = WebSocket.stompClient;
 				
 				//구독
-				stompClient.send("/m/brokerA/subscribe", {}, "${user.userId}");
+				stompClient.send("/m/brokerA/subscribe", {}, "${userId}");
 				
 				//브로커선택, 이 브로커한테서 받은 메시지 처리
 				stompClient.subscribe("/brokerA", function(msg){
@@ -79,7 +79,7 @@
 		disconnect:function(){
 			var stompClient = this.stompClient;
 			if(stompClient){
-				//stompClient.send("/m/brokerA/out", {}, "${user.userId}");
+				//stompClient.send("/m/brokerA/out", {}, "${userId}");
 				stompClient.disconnect();
 			}
 		},
@@ -113,7 +113,7 @@
 		if(msg == "//list"){
 			WebSocket.getList();
 		}else{
-			WebSocket.sendMsg(JSON.stringify({name:"${user.userId}", contents:msg}));
+			WebSocket.sendMsg(JSON.stringify({name:"${userId}", contents:msg}));
 		}
 	}
 	
