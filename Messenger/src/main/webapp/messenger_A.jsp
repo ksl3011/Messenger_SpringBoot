@@ -183,7 +183,7 @@
 		isTodayAll();
 	},5000);	
 	
-	function {
+	function isTodayAll(){
 		var $dArr = $(".date");
 		var today = new Date();
 		var date = today.getFullYear() + "/" + eval(today.getMonth()+1) + "/" + today.getDate();
