@@ -48,7 +48,7 @@ public class UserController {
 		if(outvo!=null) {
 			HttpSession s = req.getSession();
 			s.setAttribute("userId", vo.getUserId());
-			return "redirect:main.jsp";
+			return "redirect:messenger_A.jsp";
 		}else {
 			throw new Exception();
 		}

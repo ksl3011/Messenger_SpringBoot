@@ -1,5 +1,10 @@
 package com.study.messenger.web;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +36,7 @@ public class MessengerController {
 		Map<String, String> map = (Map<String, String>) a.getHeader("simpSessionAttributes");
 		String id = map.get("USER_ID");
 		System.out.println("brokerA/subscribe << " + id);
-		MessageVO vo = new MessageVO("Server", "Connect : "+ id, "");
+		MessageVO vo = new MessageVO("Server", "Connect : "+ id, "", date());
 		return vo;
 	}
 	
@@ -44,7 +49,7 @@ public class MessengerController {
 	@MessageMapping(value = "/m/brokerA/userList")
 	@SendTo("/brokerA")
 	public MessageVO userList() {
-		MessageVO vo = new MessageVO("Server", sh.list.toString(), "");
+		MessageVO vo = new MessageVO("Server", sh.list.toString(), "", date());
 		return vo;
 	}
 	
@@ -60,7 +65,7 @@ public class MessengerController {
 		Map<String, String> map = (Map<String, String>) a.getHeader("simpSessionAttributes");
 		String id = map.get("USER_ID");
 		System.out.println("brokerA/out << " + id);
-		MessageVO vo = new MessageVO("Server", "Connect : "+ id, "");
+		MessageVO vo = new MessageVO("Server", "Connect : "+ id, "", date());
 		return vo;
 	}
 	
@@ -74,7 +79,13 @@ public class MessengerController {
 	@SendTo("/brokerA")
 	public MessageVO message(MessageVO vo) {
 		System.out.println("brokerA서버/받은메시지 : " + vo);
+		vo.setDate(date());
 		return vo;
 	}
 	
+	private String date() {
+		Calendar c = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/M/d hh:mm:ss", Locale.KOREA);
+		return sdf.format(c.getTime());
+	}
 }

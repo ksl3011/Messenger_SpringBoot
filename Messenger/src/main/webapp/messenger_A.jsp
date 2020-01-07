@@ -1,6 +1,7 @@
 <%@page import="com.study.user.UserVO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	HttpSession s = request.getSession();
 	String userId = (s.getAttribute("userId")==null)?null:(String)s.getAttribute("userId");
@@ -26,6 +27,10 @@
 		height: 450px;
 		overflow-y: scroll;
 	}
+	.highlight{
+		background-color: lightgreen;
+		font-weight: bold;
+	}
 </style>
 </head>
 <body>
@@ -43,7 +48,7 @@
 			<i class="icon edit"></i>SEND
 		</div>
 	</div>
-	
+	<p>//list : 유저리스트</p>
 <script src="/Messenger/js/sockjs.min.js"></script>
 <script src="/Messenger/js/stomp.min.js"></script>
 <script
@@ -56,7 +61,10 @@
 
 	$(function(){
 		WebSocket.init();
+
 	})
+	
+	
 	
 	var WebSocket = {
 		stompClient:null,
@@ -140,14 +148,24 @@
 	function appendMsgToHTML(msgJson, divName, scroll){
 		var name = msgJson.name;
 		var contents = msgJson.contents;
+		var date = msgJson.date;
+		
 		var html =  "<div class='comment'>";
 			html += "<a class='avatar'>";
 			html += "<img src='https://semantic-ui.com/images/avatar/small/jenny.jpg'>";
 			html += "</a>";
 			html += "<div class='content'>";
-			html += "<a class='author'>"+name+"</a>";
+			if(name == "${userId}"){
+				html += "<a class='author highlight'>"+name+"</a>";
+			}else
+				html += "<a class='author'>"+name+"</a>";
 			html += "<div class='metadata'>";
-			html += "<span class='date'>Yesterday at 12:30AM</span>";
+			if(isToday(date)){
+				html += "<span class='date'>오늘</span>";
+			}else{
+				html += "<span class='date'>"+date+"</span>";
+			}
+			
 			html += "</div>";
 			html += "<div class='text'>";
 			html += "<p>"+contents+"</p>";
@@ -160,7 +178,41 @@
 		var h = $(div)[0].scrollHeight;
 		$(div).scrollTop(h);
 	}
+	
+	setInterval(function(){
+		isTodayAll();
+	},5000);	
+	
+	function {
+		var $dArr = $(".date");
+		var today = new Date();
+		var date = today.getFullYear() + "/" + eval(today.getMonth()+1) + "/" + today.getDate();
+ 
+		for(var i=0 ; i<$dArr.length ; i++){
+			var d = $dArr[i].textContent;
+			var arr = d.split(" ");
 
+			if(arr[0] == date){
+				$dArr[i].textContent = "오늘";
+			}else{
+				$dArr[i].textContent = arr[0] + " " + arr[1];
+			}
+		}alert("asd");
+	}
+	
+	function isToday(d){
+		var today = new Date();
+		var date = today.getFullYear() + "/" + eval(today.getMonth()+1) + "/" + today.getDate();
+ 
+		var arr = d.split(" ");
+
+		if(arr[0] == date){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
 </script>
 </body>
 </html>
