@@ -1,28 +1,20 @@
 package com.study.messenger.web;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.socket.TextMessage;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
 import com.study.cmn.MessageVO;
-import com.study.user.UserVO;
 
-@Controller
+@RestController
 public class MessengerController {
 
 	@Autowired
@@ -34,9 +26,13 @@ public class MessengerController {
 	 * @return
 	 */
 	@MessageMapping(value = "/m/brokerA/subscribe")//맵핑
-	//@SendTo("/brokerA")//이 주소로 구독중인 stompClient로 전송
-	public void subscribe(String user, SimpMessageHeaderAccessor a) {
-		System.out.println("brokerA/subscribe << " + user);
+	@SendTo("/brokerA")//이 주소로 구독중인 stompClient로 전송
+	public MessageVO subscribe(SimpMessageHeaderAccessor a) {
+		Map<String, String> map = (Map<String, String>) a.getHeader("simpSessionAttributes");
+		String id = map.get("USER_ID");
+		System.out.println("brokerA/subscribe << " + id);
+		MessageVO vo = new MessageVO("Server", "Connect : "+ id, "");
+		return vo;
 	}
 	
 	/**
@@ -60,10 +56,12 @@ public class MessengerController {
 	@ResponseBody
 	@MessageMapping(value = "/m/brokerA/out")
 	@SendTo("/brokerA")
-	public void out(String user, HttpServletRequest req) {
-		System.out.println("brokerA/out << " + user);
-		HttpSession s = req.getSession();
-		s.invalidate();
+	public MessageVO out(SimpMessageHeaderAccessor a) {
+		Map<String, String> map = (Map<String, String>) a.getHeader("simpSessionAttributes");
+		String id = map.get("USER_ID");
+		System.out.println("brokerA/out << " + id);
+		MessageVO vo = new MessageVO("Server", "Connect : "+ id, "");
+		return vo;
 	}
 	
 	/**

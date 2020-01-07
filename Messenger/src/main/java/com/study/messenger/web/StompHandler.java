@@ -6,10 +6,13 @@ import java.util.Set;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
+
+import com.study.cmn.MessageVO;
 
 @Component
 public class StompHandler implements ChannelInterceptor {
@@ -25,6 +28,8 @@ public class StompHandler implements ChannelInterceptor {
 		if(type.equals(SimpMessageType.CONNECT)) {
 			System.out.println("Connect : " + map.get("USER_ID"));
 			list.add(map.get("USER_ID"));
+			
+			
 		}else if(type.equals(SimpMessageType.DISCONNECT)) {
 			System.out.println("Disconnect : " + map.get("USER_ID"));
 			list.remove(map.get("USER_ID"));

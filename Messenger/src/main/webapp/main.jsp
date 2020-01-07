@@ -68,7 +68,7 @@
 				var stompClient = WebSocket.stompClient;
 				
 				//구독
-				stompClient.send("/m/brokerA/subscribe", {}, "${userId}");
+				stompClient.send("/m/brokerA/subscribe", {}, "");
 				
 				//브로커선택, 이 브로커한테서 받은 메시지 처리
 				stompClient.subscribe("/brokerA", function(msg){
@@ -79,8 +79,9 @@
 		disconnect:function(){
 			var stompClient = this.stompClient;
 			if(stompClient){
-				//stompClient.send("/m/brokerA/out", {}, "${userId}");
-				stompClient.disconnect();
+				stompClient.send("/m/brokerA/out", {}, "");
+				stompClient.send("/m/brokerA/disconnect", {}, "");
+			//	stompClient.disconnect();
 			}
 		},
 		sendMsg:function(msg){
